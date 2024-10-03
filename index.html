@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tengo que contarte algo importante</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        background: rgb(230, 223, 223);
+        color: #090909;
+        width: 100vw;
+        height: 100dvh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .section1 {
+        h1 {
+          text-align: center;
+        }
+        .span-1 {
+          font-size: 4rem;
+        }
+        .span-2 {
+          font-size: 2rem;
+        }
+        .span-3 {
+          font-size: 3rem;
+        }
+        .span-4 {
+          font-size: 2.5rem;
+        }
+        button {
+          width: 75px;
+          height: 30px;
+          border: none;
+          border-radius: 15px;
+          color: rgb(230, 223, 223);
+          background: #090909;
+          margin-top: 20px;
+          &:hover {
+            background: #090909c3;
+          }
+        }
+      }
+      .section2 {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        .gift-letras{
+          width: 70vw;
+          margin-top: 20px;
+        }
+      }
+      .letras {
+        text-align: center;
+        span {
+          font-size: 2.9rem;
+        }
+      }
+      .desactivado {
+        display: none;
+      }
+      .oculto {
+        visibility: hidden;
+      }
+      @media only screen and (min-width: 768px) {
+        .section2 {
+        .gift-letras{
+          width: 40vw;
+        }
+      }
+      }
+    </style>
+    <script type="module">
+      const $ = (e) => document.getElementById(e);
+      const section1 = $("s1");
+      const btn = $("btn");
+      const audio = $("myAudio");
+    
+      const section2 = $("s2");
+      const pLetras = $("pLetras");
+      const giftLetras = $("giftLetras");
+    
+      const ruta = e => `./${e}.webp`;
+    
+      // Configuración de letras y gifs
+      const letrasConfig = [
+        { frase: "Como te llama", tiempo: 0, gif: ruta("1") },
+        { frase: "Nos podemos conocer", tiempo: 1800, gif: ruta("2") },
+        { frase: "Te juro sera un placer", tiempo: 3500, gif: ruta("3") },
+        { frase: "Esos ojitos", tiempo: 5300, gif: ruta("4") },
+        { frase: "Te los hicieron a pincel", tiempo: 6400, gif: ruta("5") },
+        { frase: "Otra como tu no vuelve a nacer", tiempo: 8100, gif: ruta("6") },
+      ];
+    
+      // Precarga de imágenes para evitar demoras en la carga
+      function precargarImagenes() {
+        letrasConfig.forEach((letraObj) => {
+          const img = new Image();
+          img.src = letraObj.gif;
+        });
+      }
+    
+      // Llamar la precarga de imágenes al cargar la página
+      window.addEventListener('load', precargarImagenes);
+    
+      btn.addEventListener("click", () => {
+        section1.classList.add("desactivado");
+        section2.classList.remove("desactivado");
+    
+        audio.volume = 1.0;
+        audio.play();
+        mostrarLetras(letrasConfig);
+      });
+    
+      function mostrarLetras(config) {
+        config.forEach((letraObj) => {
+          setTimeout(() => {
+            pLetras.innerHTML = "";
+    
+            // Separar la frase en palabras
+            const palabras = letraObj.frase.split(" ");
+    
+            if (palabras.length <= 2) {
+              // Si la frase tiene 1 o 2 palabras, no se divide
+              const span1 = document.createElement("span");
+              span1.textContent = letraObj.frase;
+              pLetras.appendChild(span1);
+            } else if (palabras.length === 3) {
+              // Si la frase tiene exactamente 3 palabras, mostrar dos arriba y una abajo
+              const span1 = document.createElement("span");
+              span1.textContent = palabras.slice(0, 2).join(" "); // Las primeras dos palabras arriba
+              pLetras.appendChild(span1);
+    
+              const saltoDeLinea = document.createElement("br");
+              pLetras.appendChild(saltoDeLinea);
+    
+              const span2 = document.createElement("span");
+              span2.textContent = palabras[2]; // La última palabra abajo
+              pLetras.appendChild(span2);
+            } else {
+              // Para frases con más de 3 palabras, se divide de forma natural
+              const mitad = Math.floor(letraObj.frase.length / 2);
+              let indiceEspacio = letraObj.frase.lastIndexOf(" ", mitad);
+              if (indiceEspacio === -1) {
+                indiceEspacio = letraObj.frase.indexOf(" ", mitad);
+              }
+              if (indiceEspacio === -1) {
+                indiceEspacio = mitad;
+              }
+    
+              const primeraParte = letraObj.frase.slice(0, indiceEspacio);
+              const segundaParte = letraObj.frase.slice(indiceEspacio + 1);
+    
+              const span1 = document.createElement("span");
+              span1.textContent = primeraParte;
+              pLetras.appendChild(span1);
+    
+              const saltoDeLinea = document.createElement("br");
+              pLetras.appendChild(saltoDeLinea);
+    
+              const span2 = document.createElement("span");
+              span2.textContent = segundaParte;
+              pLetras.appendChild(span2);
+            }
+    
+            // Cambiar la imagen de fondo (gif) por la correspondiente
+            requestAnimationFrame(() => {
+              giftLetras.src = letraObj.gif;
+            });
+    
+          }, letraObj.tiempo);
+        });
+      }
+    </script>    
+  </head>
+  <body>
+    <div class="section1" id="s1">
+      <h1>
+        <span class="span-1">Hey</span><br />
+        <span class="span-2">tengo que</span><br />
+        <span class="span-3">decirte</span><br />
+        <span class="span-4">que...</span><br />
+        <button id="btn">ver</button>
+      </h1>
+    </div>
+    <div class="section2 desactivado" id="s2">
+      <audio
+        id="myAudio"
+        src="./haudio.mp3"
+        preload="auto"
+        class="desactivado"
+      ></audio>
+      <p class="letras" id="pLetras"></p>
+      <img src="" alt="" id="giftLetras" class="gift-letras" />
+    </div>
+  </body>
+</html>
